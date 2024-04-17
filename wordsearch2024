@@ -1,0 +1,110 @@
+#Creates a list of letters from the input letter string
+letters = []
+puzzlestring = "R T T P O K S Y I D B L O O D Q Q E E T E Z W Z L O C H H A Q Y Q K A U O O M C L W I I M W I I I E G W G L Q P R G Y A J O N V W V B F H P F D R Y O Z F Y E U C I H M B M K L H T L U L N F F P O C U Q H B B S H N F J J C M Q O S Q Y K X H O C B E M A G G O H Q G H A G G F I X C S F M K C P R Z J R N N L T H C E B O F H O T C D F O O L B Z J A U D T W C O K G Y N Q D K E M J R L P P I Y A A F W X I V O M T Q K T K U H S M A O O Q B A L V S L M T B U N Y S X K B O X J E D A M F B P R E K I O Z E O L X M V Q L S C G S E M I T U T I L R K M V H S D S W K I D I K N U E H T O A O O Q O O Y X N F T I Y F B R O J A F V I N E K G G C S M L S B Z Y I E Q G A U V R R T J D S E M Z L N R P H O L N V N S V R G S F N Y N X K P A T A R O O I A S G M M G W A I M U O U O T L U E C C I T G B S T T F Y X O J Q L I K A R T P U G C X Z A C O R I T V I X E V Y I I N W Q I Y C H U I S J J D S L L N I U E E S V T R X U V N P E K D M B T A K Q T O E V C U N Z I D T M G O A E E Y Q E Y N O E E R H G G X W S T R X Z N I H L S U A R N B A B G R B G A Y C E I V V G N G W I Y P C E A R V P A P A N I C O L A O U B H H Y Y S S Q J O Z K Z U V K V F Q U B C P K T Z Q I S C Q I X T G L U C O S E C I G N L D Y L H F S T P M W S M D J H U F I U U V E J V C B L M D"
+puzzlestring = puzzlestring.split(' ')
+
+#Generates a dictionary of coordinates for each letter in the puzzle
+rows = 25
+columns = 25
+crow = 1
+ccolumn = 1
+coords = {}
+for letter in puzzlestring:
+    if letter not in coords.keys():
+        coords[letter] = []
+    if ccolumn > columns:
+        ccolumn = 1
+        crow += 1
+    curlettercoords = [crow,ccolumn]
+    coords[letter].append(curlettercoords)
+    ccolumn += 1
+
+#Creates a list of words from the wordbank
+wordbank = "ANTIBODIES BLOOD CSMLS CYTOGENETICS DIAGNOSTIC GLUCOSE HEMATOLOGY HEMATOCRIT HEMOGLOBIN KARYOTYPE MICROBIOLOGY PAPANICOLAOU PATIENT PCR PHLEBOTOMY SPECIMEN SYRINGE TESTING URINALYSIS VIRUS"
+wordbank = wordbank.split(' ')
+
+#Determines a direction to scan for subsequent letters in the word 
+def scan(lastpair, thispair):
+    if abs(thispair[0] - lastpair[0]) <= 1 and abs(thispair[1] - lastpair [1]) <= 1:
+        x = thispair[0] - lastpair[0]
+        y = thispair[1] - lastpair[1]
+        return(x,y)
+
+#Follows the direction where the second letter was found 
+def follow(thispair, nextcoords, direction):
+    for nextc in nextcoords:
+        if nextc[0] == thispair[0] + direction[0] and nextc[1] == thispair[1] + direction[1]:
+            return nextc
+  
+#Assigns a word to describe the direction the word is oriented
+worddirections = {}
+def directionword(direction):
+    if direction == (0,1):
+        return 'Horizontal(Left to Right)'
+    if direction == (0,-1):
+        return 'Horizontal(Right to Left)'
+    elif direction == (1,0):
+        return 'Vertical(Top to Bottom)'
+    elif direction == (-1,0):
+        return 'Vertical(Bottom to Top)'
+    elif direction == (1,1):
+        return 'Diagonal(Right Down)'
+    elif direction == (1,-1):
+        return 'Diagonal(Left Down)'
+    elif direction == (-1,-1):
+        return 'Diagonal(Left Up)'
+    elif direction == (-1,1):
+        return 'Diagonal(Right Up)'
+    else:
+        return 'Unknown'
+            
+#Searches for the word from the first letter and returns the list of coordinates
+def wordsearch(word):
+    firstcoords = coords[word[0]]
+    for first in firstcoords:
+       counter = 1
+       secondcoords = (coords[word[counter]])
+       for second in secondcoords:
+           direction = scan(first,second)
+           if direction:
+               wordcoords = [first,second]
+               lastc = second
+               counter = 1
+               while counter < len(word) - 1 and lastc:
+                    counter += 1
+                    nextcoords = (coords[word[counter]])
+                    lastc = follow(lastc,nextcoords,direction)
+                    if lastc:
+                        wordcoords.append(lastc)
+                    if len(wordcoords) == len(word):
+                        worddirections[word] = (directionword(direction))
+                        return wordcoords
+                
+#Searches for all the words in the word bank 
+answers = {}
+for word in wordbank:
+    answers[word] = wordsearch(word)
+    
+#Prompts the user to enter a word they would like to search for
+query = ''
+while query != 'EXIT':
+    query = input('Enter the word to search: (Enter ALL for all answers. Enter ALLD for all directions of words. Enter WORDBANK for all words in the word bank) ')
+    query = query.upper()
+    if query == 'ALL':
+        print('Here is the full answer key:' + str(answers) +'\n')
+    elif query == 'ALLD':
+        print('Here are all the directions:' + str(worddirections) +'\n')
+    elif query == 'WORDBANK':
+        print(str(wordbank) + '\n')
+    elif query not in answers.keys():
+        print('That word does not exist in the word bank\n')
+    else:
+        print(str(query) + ' can be found using these coordinates:' + str(answers[query]))
+        prompt = input('If you would like the direction the word is oriented, enter Y.')
+        prompt = prompt.upper()
+        if prompt == 'Y':
+            print('The direction for the word ' + str(query) + ' is ' + str(worddirections[query]) + '\n')
+        else:
+            print('\n')
+
+

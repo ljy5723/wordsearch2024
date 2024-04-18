@@ -38,26 +38,11 @@ def follow(thispair, nextcoords, direction):
   
 #Assigns a word to describe the direction the word is oriented
 worddirections = {}
+directionbank = {}
 def directionword(direction):
-    if direction == (0,1):
-        return 'Horizontal(Left to Right)'
-    if direction == (0,-1):
-        return 'Horizontal(Right to Left)'
-    elif direction == (1,0):
-        return 'Vertical(Top to Bottom)'
-    elif direction == (-1,0):
-        return 'Vertical(Bottom to Top)'
-    elif direction == (1,1):
-        return 'Diagonal(Right Down)'
-    elif direction == (1,-1):
-        return 'Diagonal(Left Down)'
-    elif direction == (-1,-1):
-        return 'Diagonal(Left Up)'
-    elif direction == (-1,1):
-        return 'Diagonal(Right Up)'
-    else:
-        return 'Unknown'
-            
+    directionbank.update({(0,1):'Horizontal(Left to Right)',(0,-1):'Horizontal(Right to Left)',(1,0):'Vertical(Top to Bottom)',(-1,0):'Vertical(Bottom to Top)',(1,1):'Diagonal(Right Down)',(1,-1):'Diagonal(Left Down)',(-1,-1):'Diagonal(Left Up)',(-1,1):'Diagonal(Right Up)'})
+    return directionbank.get(direction)
+                
 #Searches for the word from the first letter and returns the list of coordinates
 def wordsearch(word):
     firstcoords = coords[word[0]]

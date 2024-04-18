@@ -3,6 +3,15 @@ letters = []
 puzzlestring = "R T T P O K S Y I D B L O O D Q Q E E T E Z W Z L O C H H A Q Y Q K A U O O M C L W I I M W I I I E G W G L Q P R G Y A J O N V W V B F H P F D R Y O Z F Y E U C I H M B M K L H T L U L N F F P O C U Q H B B S H N F J J C M Q O S Q Y K X H O C B E M A G G O H Q G H A G G F I X C S F M K C P R Z J R N N L T H C E B O F H O T C D F O O L B Z J A U D T W C O K G Y N Q D K E M J R L P P I Y A A F W X I V O M T Q K T K U H S M A O O Q B A L V S L M T B U N Y S X K B O X J E D A M F B P R E K I O Z E O L X M V Q L S C G S E M I T U T I L R K M V H S D S W K I D I K N U E H T O A O O Q O O Y X N F T I Y F B R O J A F V I N E K G G C S M L S B Z Y I E Q G A U V R R T J D S E M Z L N R P H O L N V N S V R G S F N Y N X K P A T A R O O I A S G M M G W A I M U O U O T L U E C C I T G B S T T F Y X O J Q L I K A R T P U G C X Z A C O R I T V I X E V Y I I N W Q I Y C H U I S J J D S L L N I U E E S V T R X U V N P E K D M B T A K Q T O E V C U N Z I D T M G O A E E Y Q E Y N O E E R H G G X W S T R X Z N I H L S U A R N B A B G R B G A Y C E I V V G N G W I Y P C E A R V P A P A N I C O L A O U B H H Y Y S S Q J O Z K Z U V K V F Q U B C P K T Z Q I S C Q I X T G L U C O S E C I G N L D Y L H F S T P M W S M D J H U F I U U V E J V C B L M D"
 puzzlestring = puzzlestring.split(' ')
 
+#Prints a visualization of the wordsearch
+visualwordsearch = [[]]
+def printpuzzle(puzzlestring):
+    for count,letter in enumerate(puzzlestring):
+        if count // 25 == 0:
+            visualwordsearch.append([])
+        visualwordsearch[count//25].append(letter)
+    return visualwordsearch
+
 #Generates a dictionary of coordinates for each letter in the puzzle
 rows = 25
 columns = 25
@@ -18,6 +27,18 @@ for letter in puzzlestring:
     curlettercoords = [crow,ccolumn]
     coords[letter].append(curlettercoords)
     ccolumn += 1
+    
+#Prints a visualization of the wordsearch
+def printpuzzle(puzzlestring):
+    visualwordsearch = [[]]
+    vwsstring = ''
+    for count,letter in enumerate(puzzlestring):
+        if count // columns == 0 and len(visualwordsearch) < rows:
+            visualwordsearch.append([])
+        visualwordsearch[count//columns].append(letter)
+    for row in visualwordsearch:
+        vwsstring += str(row) + '\n'
+    return vwsstring
 
 #Creates a list of words from the wordbank
 wordbank = "ANTIBODIES BLOOD CSMLS CYTOGENETICS DIAGNOSTIC GLUCOSE HEMATOLOGY HEMATOCRIT HEMOGLOBIN KARYOTYPE MICROBIOLOGY PAPANICOLAOU PATIENT PCR PHLEBOTOMY SPECIMEN SYRINGE TESTING URINALYSIS VIRUS"
@@ -73,7 +94,7 @@ for word in wordbank:
 #Prompts the user to enter a word they would like to search for
 query = ''
 while query != 'EXIT':
-    query = input('Enter the word to search: (Enter ALL for all answers. Enter ALLD for all directions of words. Enter WORDBANK for all words in the word bank) ')
+    query = input('Enter the word to search: (Enter ALL for all answers. Enter ALLD for all directions of words. Enter WORDBANK for all words in the word bank. Enter WORDSEARCH to see the wordsearch) ')
     query = query.upper()
     if query == 'ALL':
         print('Here is the full answer key:' + str(answers) +'\n')
@@ -81,6 +102,8 @@ while query != 'EXIT':
         print('Here are all the directions:' + str(worddirections) +'\n')
     elif query == 'WORDBANK':
         print(str(wordbank) + '\n')
+    elif query == 'WORDSEARCH':
+        print(printpuzzle(puzzlestring))
     elif query not in answers.keys():
         print('That word does not exist in the word bank\n')
     else:
@@ -91,5 +114,3 @@ while query != 'EXIT':
             print('The direction for the word ' + str(query) + ' is ' + str(worddirections[query]) + '\n')
         else:
             print('\n')
-
-
